@@ -93,8 +93,9 @@ jobs:
               lb build
               shopt -s nullglob
               images=( *.iso )
-              if [ "${#images[@]}" -eq 0 ]; then
-                echo "ERROR: live-build terminó sin generar una ISO."
+              if [ "${#images[@]}" -ne 1 ]; then
+                echo "ERROR: se esperaba exactamente UNA ISO integrada; se encontraron ${#images[@]}."
+                printf '%s\n' "${images[@]}"
                 exit 1
               fi
               for image in "${images[@]}"; do
@@ -117,20 +118,13 @@ jobs:
               done
             '
 
-      - name: Guardar ISO compilada
-        if: success()
-        uses: actions/upload-artifact@v6
-        with:
-          name: NovaLinux-Zenkai-OS-Debian13-amd64
-          path: "*.iso"
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Guardar registros incluso si falla
+      - name: Guardar paquete único de entrega (ISO integrada + registros)
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: NovaLinux-build-logs
-          path: build-logs/
+          name: NovaLinux-Zenkai-OS-ISO-COMPLETA
+          path: |
+            *.iso
+            build-logs/
           if-no-files-found: warn
           retention-days: 30
