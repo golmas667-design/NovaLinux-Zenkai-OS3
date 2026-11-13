@@ -4,45 +4,103 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
 
 permissions:
   contents: read
 
+concurrency:
+  group: novalinux-iso-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-iso:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Liberar espacio
+      - name: Preparar directorios
+        shell: bash
         run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          mkdir -p build-logs .cache/apt/archives/partial
           df -h
 
-      - name: Instalar herramientas
+      - name: Validación previa de archivos y scripts
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y live-build debootstrap xorriso squashfs-tools grub-pc-bin grub-efi-amd64-bin
+          set -euo pipefail
+          test -s auto/config
+          test -s config/package-lists/sistema-base.list.chroot
+          test -s config/package-lists/escritorio.list.chroot
+          test -s config/package-lists/herramientas.list.chroot
+          sh -n auto/config
+          sh -n auto/build
+          sh -n auto/clean
+          ! grep -RInE '^[[:space:]]*(sudo|apt|apt-get)[[:space:]]' config/package-lists
+          ! grep -RInE '^[[:space:]]*[^#[:space:]][^[:space:]]*[[:space:]]' config/package-lists
+          echo "Preflight correcto."
 
-      - name: Validar configuración
+      - name: Construir dentro de Debian Trixie aislado
+        shell: bash
         run: |
-          test -f auto/config
-          test -f config/package-lists/sistema-base.list.chroot
-          test -f config/package-lists/escritorio.list.chroot
-          chmod +x auto/config auto/clean auto/build
+          set -Eeuo pipefail
+          set -o pipefail
+          docker run --privileged --rm \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -v "$GITHUB_WORKSPACE/.cache/apt:/var/cache/apt/archives" \
+            -w /work \
+            debian:trixie bash -lc '
+              set -Eeuo pipefail
+              export DEBIAN_FRONTEND=noninteractive
+              mkdir -p build-logs
+              exec > >(tee -a build-logs/build.log) 2>&1
+              for attempt in 1 2 3; do
+                if apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 update; then
+                  break
+                fi
+                if [ "$attempt" -eq 3 ]; then
+                  echo "ERROR: apt update falló tras 3 intentos."
+                  exit 1
+                fi
+                sleep $((attempt * 15))
+              done
+              apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
+                live-build debootstrap xorriso squashfs-tools \
+                grub-pc-bin grub-efi-amd64-bin isolinux syslinux-common
+              chmod +x auto/config auto/build auto/clean
+              lb config
+              lb build
+              shopt -s nullglob
+              images=( *.iso )
+              if [ "${#images[@]}" -eq 0 ]; then
+                echo "ERROR: live-build terminó sin generar una ISO."
+                exit 1
+              fi
+              for image in "${images[@]}"; do
+                test -s "$image"
+                sha256sum "$image" | tee "build-logs/${image}.sha256"
+                xorriso -indev "$image" -toc
+              done
+            '
 
-      - name: Configurar Live-Build
-        run: sudo lb config
-
-      - name: Construir ISO
-        run: sudo lb build
-
-      - name: Publicar ISO
+      - name: Guardar ISO compilada
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: NovaLinux-Zenkai-OS-Debian13-amd64
           path: "*.iso"
           if-no-files-found: error
           retention-days: 14
+
+      - name: Guardar registros incluso si falla
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NovaLinux-build-logs
+          path: build-logs/
+          if-no-files-found: warn
+          retention-days: 30
