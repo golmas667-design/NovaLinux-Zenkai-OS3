@@ -38,7 +38,7 @@ hwinfo
 lshw
 rfkill
 udisks2
- dosfstools
+dosfstools
 
 # Basic desktop applications
 firefox-esr
