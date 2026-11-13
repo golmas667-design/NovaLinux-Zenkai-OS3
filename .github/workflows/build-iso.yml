@@ -42,6 +42,11 @@ jobs:
           grep -qx "gamemode" config/package-lists/novalinux-completo.list.chroot
           grep -qx "mangohud" config/package-lists/novalinux-completo.list.chroot
           grep -qx "conky-all" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "firmware-atheros" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "firmware-brcm80211" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "firmware-mediatek" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "firmware-nvidia-graphics" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "firmware-intel-sound" config/package-lists/novalinux-completo.list.chroot
           test -s config/includes.chroot/etc/novalinux/conky.conf
           test -s config/includes.chroot/etc/skel/.config/conky/conky.conf
           test -s config/includes.chroot/etc/skel/.config/autostart/novalinux-monitor.desktop
