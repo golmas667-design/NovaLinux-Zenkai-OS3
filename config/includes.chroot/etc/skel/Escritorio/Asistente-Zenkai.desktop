@@ -1,8 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Asistente Zenkai
-Comment=Asistente de inteligencia artificial local de NovaLinux
-Exec=exo-open https://ollama.com/
-Icon=applications-science
-Terminal=false
-Categories=Utility;Education;
