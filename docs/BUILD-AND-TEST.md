@@ -1,22 +1,40 @@
-# NovaLinux Zenkai OS — compilación y pruebas
+# NovaLinux Zenkai OS — compilación de una sola ISO
 
-## Base
-Debian 13 (Trixie), arquitectura amd64, XFCE y live-build. La ISO se construye desde los repositorios oficiales de Debian; no se redistribuye ni se modifica una ISO propietaria/precompilada.
+## Integración real
+La ISO final se construye con Debian 13 (Trixie), amd64 y live-build.
+Todos los paquetes del sistema, XFCE, firmware/controladores disponibles,
+Calamares, GameMode, MangoHud, Conky y sensores están declarados juntos en
+`config/package-lists/novalinux-completo.list.chroot`.
 
-## Funciones incluidas en esta etapa
-- XFCE y Calamares.
-- Firmware Debian no libre habilitado en live-build.
-- Herramientas gaming: GameMode y MangoHud.
-- Monitor lateral Conky: CPU, RAM, temperaturas disponibles, disco y red.
-- Herramientas Vulkan/Mesa para diagnóstico y aceleración gráfica.
+El workflow exige que exista exactamente una lista de paquetes `.list.chroot`.
+Live-build instala esa lista dentro del filesystem raíz del sistema Live y
+genera una sola imagen `.iso` con el sistema integrado en
+`/live/filesystem.squashfs`. No se generan ISOs separadas por componente.
 
-## Limitaciones conocidas
-- No existe un controlador universal: Intel, AMD y NVIDIA requieren paquetes y pruebas específicos.
-- La temperatura de GPU y ventiladores solo aparece si el kernel/controlador expone sensores compatibles.
-- FPS de MangoHud se muestra dentro de juegos compatibles, no como contador global.
-- GameMode no garantiza más FPS; aplica optimizaciones compatibles cuando el juego lo solicita.
-- Steam/Proton y controladores NVIDIA propietarios se mantienen como instalación opcional para no inflar la ISO ni forzar hardware específico.
-- La ISO amd64 no arranca en equipos ARM ni en sistemas exclusivamente UEFI de 32 bits.
+Los archivos de `config/includes.chroot/` son personalizaciones de la raíz
+del sistema (monitor, configuración y autoinicio). No son instaladores
+independientes ni imágenes separadas: live-build los copia dentro del mismo
+filesystem que termina empaquetado en la ISO.
 
-## Validación
-GitHub Actions ejecuta preflight, construye la ISO, comprueba que exista el sistema squashfs y que Calamares, Conky, GameMode y MangoHud estén dentro de la imagen. Después publica la ISO y registros como artefactos. La compilación exitosa no sustituye pruebas de arranque e instalación en equipos físicos/VM.
+## Componentes
+- Debian 13 Trixie, kernel amd64, arranque Live híbrido.
+- XFCE, LightDM, NetworkManager y Calamares.
+- Firmware Debian no libre y firmware gráfico Intel/AMD disponible en Debian.
+- GameMode, MangoHud, Mesa/Vulkan y utilidades de diagnóstico.
+- Monitor Conky con CPU, RAM, sensores de temperatura disponibles, disco y red.
+
+## Límites técnicos
+- No existe un controlador universal. Los controladores se limitan al kernel,
+  firmware y paquetes disponibles para el hardware soportado por Debian.
+- La temperatura de GPU/ventiladores solo aparece cuando el controlador y el
+  firmware exponen sensores al kernel.
+- NVIDIA propietario y Steam/Proton quedan como instalación opcional para no
+  imponer controladores específicos ni aumentar el tamaño base.
+- La ISO amd64 no es compatible con equipos ARM ni con UEFI de 32 bits.
+
+## Validación automática
+GitHub Actions verifica que haya una única lista consolidada, comprueba los
+scripts y construye una única ISO. Luego inspecciona el SquashFS extraído para
+confirmar que contiene Calamares, Conky, GameMode, MangoHud y el lector de
+sensores. La compilación debe finalizar en verde y la ISO todavía debe probarse
+arrancando e instalando en una máquina virtual y en hardware real.
