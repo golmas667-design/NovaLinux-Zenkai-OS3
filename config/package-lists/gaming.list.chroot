@@ -7,3 +7,5 @@ mesa-vulkan-drivers
 mesa-va-drivers
 vulkan-tools
 intel-media-va-driver
+firmware-amd-graphics
+firmware-intel-graphics
