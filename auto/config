@@ -1,15 +1,14 @@
 #!/bin/sh
 set -eu
-
 lb config noauto \
+  --mode debian \
   --distribution trixie \
   --architectures amd64 \
-  --binary-images iso-hybrid \
+  --binary-image iso-hybrid \
   --archive-areas "main contrib non-free non-free-firmware" \
-  --debian-installer false \
+  --debian-installer live \
   --apt-recommends true \
-  --memtest none \
   --iso-application "NovaLinux Zenkai OS" \
   --iso-publisher "NovaLinux Zenkai OS Project" \
   --iso-volume "NOVALINUX_ZENKAI" \
-  "${@}"
+  "$@"

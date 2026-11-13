@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+install -d /etc/issue.d
+cat > /etc/issue.d/zenkai.issue <<'EOF'
+NovaLinux Zenkai OS - Debian 13 Trixie
+EOF

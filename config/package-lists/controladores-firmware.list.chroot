@@ -1,0 +1,15 @@
+firmware-linux
+firmware-linux-nonfree
+firmware-misc-nonfree
+firmware-realtek
+firmware-iwlwifi
+firmware-atheros
+firmware-brcm80211
+firmware-amd-graphics
+firmware-intel-graphics
+pciutils
+usbutils
+hwinfo
+lshw
+rfkill
+udisks2

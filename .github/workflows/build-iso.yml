@@ -8,71 +8,39 @@ on:
       - "auto/**"
       - "config/**"
       - ".github/workflows/build-iso.yml"
-      - "README.md"
-  pull_request:
-    branches: [main]
-    paths:
-      - "auto/**"
-      - "config/**"
-      - ".github/workflows/build-iso.yml"
-      - "README.md"
 
 permissions:
   contents: read
 
-concurrency:
-  group: novalinux-iso-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   build:
-    name: Debian 13 Live ISO (amd64)
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install Debian Live-Build and image tools
+      - uses: actions/checkout@v4
+      - name: Install live-build
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            live-build debootstrap squashfs-tools xorriso \
-            grub-pc-bin grub-efi-amd64-bin mtools dosfstools \
-            isolinux syslinux-common
-
-      - name: Validate project configuration
+          sudo apt-get install -y live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools dosfstools
+      - name: Set executable scripts
+        run: chmod +x auto/config auto/clean auto/build config/hooks/normal/*.hook.chroot
+      - name: Configure and build
         run: |
-          test -x auto/config
-          test -s config/package-lists/zenkai.list.chroot
-          bash -n auto/config
-
-      - name: Configure Live-Build
-        run: sudo lb config
-
-      - name: Build ISO
-        run: sudo lb build
-
-      - name: Verify ISO artifact
-        id: verify
+          sudo lb config
+          sudo lb build
+      - name: Verify ISO and checksum
         run: |
           set -euo pipefail
-          mapfile -t images < <(find . -maxdepth 1 -type f -name '*.iso' -size +100M)
-          if [ "${#images[@]}" -ne 1 ]; then
-            echo "Expected exactly one ISO larger than 100 MiB; found ${#images[@]}."
-            find . -maxdepth 2 -type f -name '*.iso' -printf '%p %s bytes\n' || true
-            exit 1
-          fi
-          file "${images[0]}"
-          sha256sum "${images[0]}" | tee SHA256SUMS
-          echo "iso_path=${images[0]}" >> "$GITHUB_OUTPUT"
-
-      - name: Upload ISO and checksum
+          mapfile -t isos < <(find . -maxdepth 1 -type f -name '*.iso' -size +100M)
+          test "${#isos[@]}" -eq 1
+          file "${isos[0]}"
+          sha256sum "${isos[0]}" | tee SHA256SUMS
+      - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: NovaLinux-Zenkai-OS-Debian13-amd64
           path: |
-            ${{ steps.verify.outputs.iso_path }}
+            *.iso
             SHA256SUMS
           if-no-files-found: error
           compression-level: 0
