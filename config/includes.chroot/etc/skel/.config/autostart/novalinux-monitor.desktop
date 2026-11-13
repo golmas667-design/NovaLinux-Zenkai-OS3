@@ -2,6 +2,6 @@
 Type=Application
 Name=NovaLinux Hardware Monitor
 Comment=Panel lateral de rendimiento y temperaturas
-Exec=conky --daemonize --config=%h/.config/conky/conky.conf
+Exec=conky --daemonize --config=/etc/novalinux/conky.conf
 Terminal=false
 X-GNOME-Autostart-enabled=true
