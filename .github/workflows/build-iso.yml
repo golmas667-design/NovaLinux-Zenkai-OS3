@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 360
     steps:
       - name: Descargar repositorio
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Preparar directorios
         shell: bash
@@ -114,7 +114,7 @@ jobs:
 
       - name: Guardar ISO compilada
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: NovaLinux-Zenkai-OS-Debian13-amd64
           path: "*.iso"
@@ -123,7 +123,7 @@ jobs:
 
       - name: Guardar registros incluso si falla
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: NovaLinux-build-logs
           path: build-logs/
