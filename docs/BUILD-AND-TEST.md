@@ -19,11 +19,11 @@ filesystem que termina empaquetado en la ISO.
 ## Componentes
 - Debian 13 Trixie, kernel amd64, arranque Live híbrido.
 - XFCE, LightDM, NetworkManager y Calamares.
-- Firmware Debian no libre y firmware gráfico Intel/AMD disponible en Debian.
+- Firmware Debian para Intel, AMD y NVIDIA graphics firmware; Wi-Fi/Bluetooth Qualcomm-Atheros, Broadcom/Cypress, MediaTek, Intel, Realtek, Marvell y TI; audio Intel/Cirrus/Realtek; además de firmware para controladoras Ethernet, almacenamiento y multimedia soportadas por Debian.
 - GameMode, MangoHud, Mesa/Vulkan y utilidades de diagnóstico.
 - Monitor Conky con CPU, RAM, sensores de temperatura disponibles, disco y red.
 
-## Límites técnicos
+## Cobertura de hardware y controladores\nDebian incluye los módulos de controladores del kernel Linux para el hardware soportado; la lista de firmware añade blobs para numerosas familias de GPU, Wi-Fi/Bluetooth, audio, Ethernet y multimedia. El firmware se integra en la misma imagen raíz de la ISO. La disponibilidad de un paquete no garantiza que cada dispositivo funcione: depende del modelo exacto, revisión, kernel y soporte upstream.\n\n## Límites técnicos
 - No existe un controlador universal. Los controladores se limitan al kernel,
   firmware y paquetes disponibles para el hardware soportado por Debian.
 - La temperatura de GPU/ventiladores solo aparece cuando el controlador y el
