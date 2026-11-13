@@ -1,0 +1,61 @@
+# NovaLinux Zenkai OS — Debian 13 Trixie — amd64
+# Paquetes completos: base, escritorio, instalador, controladores/firmware,
+# monitorización y utilidades gaming. live-build integra esta lista en
+# una única imagen /live/filesystem.squashfs dentro de la ISO final.
+
+# Sistema y arranque
+linux-image-amd64
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+sudo
+network-manager
+network-manager-gnome
+ca-certificates
+curl
+wget
+git
+pciutils
+usbutils
+grub-pc-bin
+grub-efi-amd64-bin
+
+# Firmware y gráficos
+firmware-linux
+firmware-linux-nonfree
+firmware-iwlwifi
+firmware-realtek
+firmware-misc-nonfree
+firmware-amd-graphics
+firmware-intel-graphics
+mesa-utils
+mesa-vulkan-drivers
+mesa-va-drivers
+intel-media-va-driver
+vulkan-tools
+
+# Escritorio XFCE
+task-xfce-desktop
+lightdm
+lightdm-gtk-greeter
+xfce4-terminal
+firefox-esr
+mousepad
+
+# Instalación y mantenimiento
+python3
+python3-venv
+python3-requests
+zstd
+gparted
+dosfstools
+ntfs-3g
+calamares
+calamares-settings-debian
+
+# Juegos y monitorización
+gamemode
+mangohud
+conky-all
+lm-sensors
