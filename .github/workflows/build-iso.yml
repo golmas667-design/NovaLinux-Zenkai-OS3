@@ -34,18 +34,20 @@ jobs:
         run: |
           set -euo pipefail
           test -s auto/config
-          test -s config/package-lists/sistema-base.list.chroot
-          test -s config/package-lists/escritorio.list.chroot
-          test -s config/package-lists/herramientas.list.chroot
-          test -s config/package-lists/gaming.list.chroot
+          test -s config/package-lists/novalinux-completo.list.chroot
+          test "$(find config/package-lists -maxdepth 1 -type f -name '*.list.chroot' | wc -l)" -eq 1
+          grep -qx "linux-image-amd64" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "task-xfce-desktop" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "calamares" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "gamemode" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "mangohud" config/package-lists/novalinux-completo.list.chroot
+          grep -qx "conky-all" config/package-lists/novalinux-completo.list.chroot
           test -s config/includes.chroot/etc/novalinux/conky.conf
           test -s config/includes.chroot/etc/skel/.config/conky/conky.conf
           test -s config/includes.chroot/etc/skel/.config/autostart/novalinux-monitor.desktop
           test -s config/includes.chroot/usr/local/bin/novalinux-sensors.py
           PYTHONPYCACHEPREFIX=/tmp/novalinux-pycache python3 -m py_compile config/includes.chroot/usr/local/bin/novalinux-sensors.py
-          grep -qx "gamemode" config/package-lists/gaming.list.chroot
-          grep -qx "mangohud" config/package-lists/gaming.list.chroot
-          grep -qx "calamares-settings-debian" config/package-lists/herramientas.list.chroot
+          grep -qx "calamares-settings-debian" config/package-lists/novalinux-completo.list.chroot
           ! grep -q -- "--debian-installer live" auto/config
           sh -n auto/config
           sh -n auto/build
