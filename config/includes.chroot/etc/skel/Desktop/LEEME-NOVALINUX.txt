@@ -2,4 +2,4 @@ NovaLinux Zenkai OS
 Basado en Debian 13 Trixie.
 Sesión Live: usuario admin (configurado por live-config).
 Conéctate a Internet mediante NetworkManager.
-Esta versión es de desarrollo: realiza copias de seguridad y prueba primero en una máquina virtual.
+Versión de desarrollo: realiza copias de seguridad y prueba primero en una máquina virtual.

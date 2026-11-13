@@ -1,31 +1,18 @@
 # NovaLinux Zenkai OS
+Distribución Live personalizada basada en Debian 13 (Trixie), arquitectura amd64.
 
-Sistema operativo personalizado basado en Debian 13 Trixie.
+## Primera imagen de desarrollo
+- Kernel Debian amd64, live-boot y live-config.
+- XFCE, LightDM y NetworkManager.
+- Firmware Debian desde main, contrib, non-free y non-free-firmware.
+- Herramientas de diagnóstico y particionado.
+- Arranque ISO híbrido BIOS/UEFI.
 
-## Objetivo de la primera imagen
+## Compilar
+En GitHub: Actions → Construir NovaLinux Zenkai OS ISO → Run workflow.
+El resultado se publica como artefacto descargable.
 
-Una ISO Live híbrida amd64 que integre en una sola imagen el sistema base, kernel, firmware disponible en Debian, escritorio XFCE, red, audio, Bluetooth, utilidades y herramientas iniciales para IA.
+## Estado
+Primera configuración de desarrollo. No se considera estable hasta compilar y probar inicio Live, sesión gráfica, red, almacenamiento e instalador en máquina virtual y hardware real.
 
-## Construcción
-
-Requiere Debian 13 o entorno compatible, permisos de root y conexión a Internet:
-
-```bash
-sudo apt update
-sudo apt install live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools dosfstools
-chmod +x auto/config auto/clean auto/build
-sudo lb config
-sudo lb build
-```
-
-La ISO se genera en el directorio raíz. No se considera terminada hasta verificar su arranque e instalación.
-
-## IA local
-
-La ISO debe integrar el acceso al asistente Zenkai y sus herramientas de preparación. Ollama y los modelos grandes se configuran después del primer arranque para no inflar innecesariamente la imagen.
-
-## Limitaciones
-
-- Primera versión amd64.
-- El firmware depende del hardware.
-- Deben probarse BIOS, UEFI, instalación, red, audio, gráficos y apagado antes de declarar estable la distribución.
+La sesión Live solicita el usuario admin; verificar el comportamiento de autenticación durante la prueba. No se promete compatibilidad universal con todo el hardware.
