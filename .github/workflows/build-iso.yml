@@ -37,6 +37,13 @@ jobs:
           test -s config/package-lists/sistema-base.list.chroot
           test -s config/package-lists/escritorio.list.chroot
           test -s config/package-lists/herramientas.list.chroot
+          test -s config/package-lists/gaming.list.chroot
+          test -s config/includes.chroot/etc/skel/.config/conky/conky.conf
+          test -s config/includes.chroot/etc/skel/.config/autostart/novalinux-monitor.desktop
+          test -s config/includes.chroot/usr/local/bin/novalinux-sensors.py
+          python3 -m py_compile config/includes.chroot/usr/local/bin/novalinux-sensors.py
+          grep -qx "gamemode" config/package-lists/gaming.list.chroot
+          grep -qx "mangohud" config/package-lists/gaming.list.chroot
           grep -qx "calamares-settings-debian" config/package-lists/herramientas.list.chroot
           ! grep -q -- "--debian-installer live" auto/config
           sh -n auto/config
@@ -93,6 +100,10 @@ jobs:
                 unsquashfs -ll "$squashfs" > "build-logs/${image}.filesystem.txt"
                 grep -Eq "usr/bin/calamares$" "build-logs/${image}.filesystem.txt"
                 grep -q "calamares-install-debian.desktop" "build-logs/${image}.filesystem.txt"
+                grep -Eq "usr/bin/conky$" "build-logs/${image}.filesystem.txt"
+                grep -Eq "usr/bin/mangohud$" "build-logs/${image}.filesystem.txt"
+                grep -Eq "usr/bin/gamemoded$" "build-logs/${image}.filesystem.txt"
+                grep -Eq "usr/local/bin/novalinux-sensors.py$" "build-logs/${image}.filesystem.txt"
                 echo "ISO verificada: contiene Calamares dentro del sistema Live."
               done
             '
