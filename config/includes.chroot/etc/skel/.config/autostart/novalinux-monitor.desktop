@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=NovaLinux Hardware Monitor
+Comment=Panel lateral de rendimiento y temperaturas
+Exec=conky --daemonize --config=%h/.config/conky/conky.conf
+Terminal=false
+X-GNOME-Autostart-enabled=true
